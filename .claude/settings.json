@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(sudo *)",
+      "Bash(daxctl reconfigure-device *)",
+      "Bash(daxctl online-memory *)",
+      "Bash(daxctl offline-memory *)",
+      "Bash(daxctl create-device *)",
+      "Bash(daxctl destroy-device *)",
+      "Bash(daxctl enable-device *)",
+      "Bash(daxctl disable-device *)",
+      "Bash(cxl create-region *)",
+      "Bash(cxl destroy-region *)",
+      "Bash(cxl enable-region *)",
+      "Bash(cxl disable-region *)",
+      "Bash(cxl enable-memdev *)",
+      "Bash(cxl disable-memdev *)",
+      "Bash(cxl set-partition *)",
+      "Bash(cxl zero-labels *)",
+      "Bash(cxl write-labels *)",
+      "Bash(mount *)",
+      "Bash(umount *)",
+      "Bash(mkfs *)",
+      "Bash(mkfs.*)",
+      "Bash(sysctl -w *)",
+      "Bash(modprobe *)",
+      "Bash(rmmod *)"
+    ]
+  }
+}

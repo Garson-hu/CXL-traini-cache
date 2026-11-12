@@ -1,0 +1,35 @@
+{
+  "_template_note": "Copy to experimental_results/<experiment_id>/metadata.json and fill in. Empty strings and null values are placeholders, not measured values. Remove this note in the copy.",
+  "experiment_id": "",
+  "title": "",
+  "timestamp": "",
+  "git_commit": "",
+  "git_working_tree_clean": null,
+  "hostname": "",
+  "hardware_config_ref": "hardware/<hostname>.md",
+  "result_type": "",
+  "software_versions": {
+    "os": "",
+    "kernel": "",
+    "python": "",
+    "framework": "",
+    "gpu_driver": "",
+    "workload": "",
+    "other": {}
+  },
+  "configuration": {
+    "config_file": "",
+    "parameters": {}
+  },
+  "dataset": {
+    "name": "",
+    "path": "",
+    "num_files": null,
+    "total_bytes": null
+  },
+  "random_seed": null,
+  "raw_result_path": "",
+  "summary_result_path": "",
+  "status": "planned",
+  "notes": ""
+}

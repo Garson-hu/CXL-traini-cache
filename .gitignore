@@ -1,0 +1,117 @@
+# Repository policy: the Git repository stays lightweight (40 GB home quota).
+# Large data lives under $CXL_TRAINING_DATA_ROOT on BeeGFS. See docs/storage.md.
+
+# --- Large-data directories that must never live in the repository -----------
+# Listed without a trailing slash so that symlinks with these names are ignored too.
+/data
+/datasets
+/checkpoints
+/traces
+/results
+/raw_results
+/workloads
+/tmp
+/scratch
+/downloads
+
+# --- Datasets ---------------------------------------------------------------
+*.tfrecord
+*.tfrecords
+*.tfrecord-*
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.parquet
+*.lmdb
+*.mdb
+
+# --- Model checkpoints and saved models -------------------------------------
+*.ckpt
+*.ckpt.*
+*.pt
+*.pth
+*.safetensors
+*.keras
+*.pb
+saved_model/
+
+# --- Large traces and profiling outputs -------------------------------------
+*.trace
+*.trace.*
+*.strace
+*.blktrace.*
+*.darshan
+perf.data
+perf.data.*
+*.prof
+*.pstats
+core.[0-9]*
+
+# --- Raw experiment outputs --------------------------------------------------
+# Small summaries, metadata, and figures under experimental_results/ are tracked.
+# Anything placed in a raw/ subdirectory is not.
+experimental_results/**/raw/
+*.log
+nohup.out
+slurm-*.out
+
+# --- Python ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.conda/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# --- Compiled artifacts and build directories --------------------------------
+build/
+build-*/
+cmake-build-*/
+dist/
+CMakeCache.txt
+CMakeFiles/
+*.o
+*.a
+*.so
+*.so.*
+*.out
+*.exe
+
+# --- Temporary files ---------------------------------------------------------
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+
+# --- Local environment configuration -----------------------------------------
+.env
+.env.*
+!.env.example
+configs/env.local.sh
+*.local.sh
+*.local.json
+*.local.yaml
+*.local.yml
+.claude/settings.local.json
+.vscode/
+.idea/
+
+# --- Downloaded dependencies and archives ------------------------------------
+third_party/
+external/
+node_modules/
+*.tar
+*.tar.*
+*.tgz
+*.zip
+*.whl
