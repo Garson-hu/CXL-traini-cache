@@ -43,6 +43,12 @@ actually done and actually verified. If something was not checked, say so.
   - Removed the resolved root-name item from
     `workload_configs/cosmoflow/README.md`.
   - First commit on `main`, remote `origin` added, pushed.
+  - The GitHub repository is public. Before publishing, the repository was
+    scanned for credentials, e-mail addresses, and addresses; the NFS
+    server's internal address was removed from `docs/storage.md`.
+  - `origin` uses the SSH URL of the repository. The push over the HTTPS URL
+    failed because no credential helper is configured on this machine; SSH is
+    what the user's other repository uses.
 - **Files affected:** the files named above, `WORKLOG.md`, and externally
   `/mnt/beegfs/ghu4/cxl-train-cache/` (renamed).
 - **Verification performed:**
@@ -55,6 +61,7 @@ actually done and actually verified. If something was not checked, say so.
   - No reference to the old name remains outside this log and the amendment
     note in `docs/decisions.md`.
   - Markdown links re-checked.
+  - After each push, local `main` and `origin/main` pointed to the same commit.
 - **Results:** No experimental results.
 - **Open questions:**
   - Carried over from the previous entry, except the two that are now
