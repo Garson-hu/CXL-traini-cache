@@ -1,8 +1,13 @@
 # benchmarks/
 
-Reserved for microbenchmarks.
+Microbenchmarks.
 
-**Status: no benchmarks are implemented and none have been run.**
+**Status:** two benchmarks exist.
+
+| Directory | What it measures | Used by |
+|---|---|---|
+| [remote_cache/](remote_cache/README.md) | Moving training data objects between a client node and DRAM or CXL memory on a server through Mercury; admission from the file system; direct file system reads; local copy rates | `2026-11-12-remote-cxl-data-path` |
+| [train_io/](train_io/README.md) | CosmoFlow training I/O: supply of the real input pipeline, the GPU's compute-only rate, time spent waiting for data in training, raw file reads, and access traces with job identity. No cache, no CXL. | `2026-11-16-workload-io-validation` |
 
 ## Intended scope
 
