@@ -48,10 +48,18 @@ perf.data.*
 *.pstats
 core.[0-9]*
 
-# --- Raw experiment outputs --------------------------------------------------
-# Small summaries, metadata, and figures under experimental_results/ are tracked.
-# Anything placed in a raw/ subdirectory is not.
-experimental_results/**/raw/
+# --- Experiments -------------------------------------------------------------
+# Experiment directories (experimental_results/YYYY-MM-DD-<name>/) stay local.
+# Only the conventions and the metadata template are tracked. The tracked record
+# of what was done is docs/experiments/INDEX.md.
+/experimental_results/*
+!/experimental_results/README.md
+!/experimental_results/metadata_template.json
+
+# --- Slides (local only) -----------------------------------------------------
+/docs/slides/
+
+# --- Raw outputs and logs ----------------------------------------------------
 *.log
 nohup.out
 slurm-*.out

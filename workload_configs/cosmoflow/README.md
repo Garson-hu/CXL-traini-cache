@@ -2,11 +2,14 @@
 
 Audit of the CosmoFlow workload, the initial target workload of the project.
 
-**Status (2026-11-11):** the training code, a working software environment,
-and the datasets already exist on this cluster from earlier work. They were
-inspected read-only. Nothing was installed, downloaded, copied, or moved, and
-no training run was started. This directory holds no configuration or launch
-script yet.
+**Status (2026-11-16):** the training code, a working software environment,
+and the datasets already exist on this cluster from earlier work. They are
+used read-only; nothing was installed, downloaded, copied, or moved. The audit
+below is from 2026-11-11. The first training measurements were made on
+2026-11-16 with the harness in
+[benchmarks/train_io](../../benchmarks/train_io/README.md) (experiment
+`2026-11-16-workload-io-validation`); their results are in section 7. This
+directory holds no configuration or launch script of its own.
 
 Evidence labels are defined in
 [docs/project_overview.md](../../docs/project_overview.md).
@@ -38,8 +41,9 @@ Missing or unresolved:
 |---|---|---|---|
 | `train_61440/train` | 61,440 | 178,071,110,206 bytes (178.07 GB, 165.84 GiB) | **[Observed]** `stat` of every file, 2026-11-11 |
 | `train_1024/train` | 1,024 | 2,970,777,238 bytes | **[Historical]** pilot `run.json` |
-| Full `train/` | 524,288 | not summed | **[Observed]** directory entry count |
-| Full `validation/`, `test/` | 65,536 / 32,768 | not summed | **[Observed]** directory entry count |
+| Full `train/` | 524,288 | 1,519,747,404,066 bytes (1,519.75 GB, 1,415.4 GiB); files of 2.37 to 3.35 MB, mean 2.90 MB | **[Observed]** `stat` of every file, 2026-11-16 |
+| Full `validation/` | 65,536 | 189,914,856,014 bytes (189.9 GB) | **[Observed]** `stat` of every file, 2026-11-16 |
+| Full `test/` | 32,768 | 95,011,926,379 bytes (95.0 GB) | **[Observed]** `stat` of every file, 2026-11-16 |
 | Source archive | — | 1,805,152,143,360 bytes | **[Historical]** fetch script and log, 2026-10-04 |
 
 Per the fetch script, the files of `train_61440/train` were also copied into
@@ -133,10 +137,11 @@ Yes, at reduced batch size.
 - **[Historical]** A job log from 2025-11-25 shows the benchmark starting on
   this GPU at batch size 2. The current configuration file has
   `batch_size: 2 # originally 4`.
-- The same check indicated roughly 11-13 samples/s of compute. The earlier
-  A100 run reached 74.9 samples/s at batch size 4. A training job on c28
-  therefore asks for roughly one sixth of the data rate. That is an indication,
-  not a measurement.
+- **[Observed]** 2026-11-16: the training step alone runs at 17.0 samples/s
+  at batch size 2, and training at 16.86. The earlier A100 run reached 74.9
+  samples/s at batch size 4 (**[Historical]**). A training job on c28 asks
+  for 0.05 GB/s of files, 23% of the A100's rate. An RTX 4060 Ti with 16 GiB
+  (c24) runs batch size 4 at the same sample rate.
 
 ## 3. The data-loading pipeline
 
@@ -176,13 +181,16 @@ Notes:
   storage servers cache it ([hardware/c28.md](../../hardware/c28.md), section
   3.1). "Warm" BeeGFS therefore depends on the servers and on other users.
 - **[Historical]** With the sequential reader the earlier pilot reached 5.4
-  samples/s cold and 9.9 samples/s on re-read. The second number suggests a
-  CPU limit of about ten samples per second for one reader and one parse
-  thread on c33. Not measured on c28.
+  samples/s cold and 9.9 samples/s on re-read on c33. **[Observed]** on c28,
+  2026-11-16: 6.8 on first reads, 14.0 on re-reads, 14.7 from host memory;
+  the last two are limited by CPU work in the single-threaded pipeline.
 
 ## 4. Where a CXL cache could be inserted
 
-Options, from least to most intrusive. None is chosen and none is implemented.
+Options, from least to most intrusive. Option C is what the cache prototype
+of 2026-11-17 uses (input pipeline `cache` of the training harness,
+[system/](../../system/README.md), decision D007); the others are not
+implemented.
 
 | Insertion point | What is cached | Change to the trainer | Notes |
 |---|---|---|---|
@@ -193,8 +201,10 @@ Options, from least to most intrusive. None is chosen and none is implemented.
 
 Options A to C remove storage reads only. They help when storage limits the
 pipeline. Option D also removes decompression, which helps when the CPU limits
-it. Which of the two limits applies is what the first experiment has to show:
-[docs/experiments/001-training-io-characterization-plan.md](../../docs/experiments/001-training-io-characterization-plan.md).
+it. **[Observed]** 2026-11-16 (section 7): with a parallel reader neither
+limits one job on c28's GPU. At higher demand the CPU limit comes first on a
+16-core node (209 samples/s), with first-read storage supply at 112 to 155
+samples/s below it.
 
 ## 5. Rules for running this workload in this project
 
@@ -208,7 +218,46 @@ it. Which of the two limits applies is what the first experiment has to show:
 - Any script taken from `train_trace.py` must state that origin.
 - Use batch size 2 on c28 unless a larger one has been shown to fit.
 
-## 6. Historical workload context (not reproduced in this repository)
+## 6. Running the measurements
+
+The harness is [benchmarks/train_io/cosmoflow_io.py](../../benchmarks/train_io/cosmoflow_io.py):
+loader only, compute only, and instrumented training with an optional access
+trace. It takes the benchmark directory from `COSMOFLOW_BENCH` and file lists
+as arguments, and writes only to its output directory.
+
+## 7. Measured on 2026-11-16 (experiment `2026-11-16-workload-io-validation`)
+
+**[Observed]** on c28, RTX 4060 Ti, batch size 2, 16 cores. Samples per second.
+
+| | BeeGFS, first read | BeeGFS, re-read | Host memory |
+|---|---|---|---|
+| Training, 8 readers and 4 parse threads | 16.86 | 16.85 | 16.86 |
+| Training, the benchmark's sequential reader | 6.79 | 14.01 | 14.68 |
+| Input pipeline alone, 8 readers | 111.8 | 204.9 | 208.7 |
+| Input pipeline alone, 16 readers | 155.1 | 208.1 | 209.1 |
+
+- The training step alone runs at 17.01 samples/s.
+- "Readers" in this table is the cycle length of tf.data's parallel
+  interleave, which keeps up to three times as many files open at once
+  (found later the same day; `2026-11-16-loader-gpu-scaling` adds a pipeline
+  with an exact number of read streams).
+- The input pipeline costs 68 to 76 ms of CPU time per sample, 31 ms of it
+  gzip decompression.
+- With the parallel reader the trainer waits for data 0.4% of the time; with
+  the sequential reader 60% on first reads and 13% to 17% otherwise.
+- With exactly one read stream (pipeline `map` of the harness) training on
+  cold files runs at 12.5 samples/s and waits 26% of the time; two streams
+  restore 16.85 (`2026-11-16-loader-gpu-scaling`).
+- Several jobs at once, one per GPU node, each on its own cold files
+  (`2026-11-17-multi-gpu-io-saturation`): with two read streams per job they
+  wait from about 12 concurrent jobs on; with eight streams 15 jobs do not
+  wait and 20 jobs wait 20% of the time. The storage, not the loader, is the
+  limit there. On EPYC 7302P nodes training from memory runs at 16.2
+  samples/s instead of 16.85.
+- More rows, the other nodes, the storage probes, and the multi-job runs:
+  [docs/workload_selection.md](../../docs/workload_selection.md), section 6.
+
+## 8. Historical workload context (not reproduced in this repository)
 
 The earlier measurements on c33 and their source are listed in
 [hardware/c33.md](../../hardware/c33.md).

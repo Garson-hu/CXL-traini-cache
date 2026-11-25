@@ -1,8 +1,10 @@
-# <Experiment ID>: <Title>
+# <Title>
 
 <!--
-Copy this file to docs/experiments/<experiment_id>.md.
-Experiment IDs follow E<NNN>-<short-name> and are never reused.
+Copy this file to experimental_results/<YYYY-MM-DD-short-name>/summary.md.
+The directory name is the experiment's name: the day it starts plus a short name. Names are never reused.
+If the experiment continues on later days, say in the summary what was done on which day.
+Add or update the experiment's row in docs/experiments/INDEX.md.
 Do not report a number that was not produced by this experiment without saying where it comes from.
 Keep negative and inconclusive results. Do not delete a report because the result was disappointing.
 -->
@@ -11,7 +13,7 @@ Keep negative and inconclusive results. Do not delete a report because the resul
 
 | Field | Value |
 |---|---|
-| Experiment ID | |
+| Experiment | `YYYY-MM-DD-<short-name>` |
 | Date / timestamp (start, end) | |
 | Author | |
 | Status | planned / running / completed / failed / invalidated |
@@ -21,8 +23,8 @@ Keep negative and inconclusive results. Do not delete a report because the resul
 | Hostname | |
 | Hardware reference | `hardware/<host>.md` |
 | Random seed(s) | |
-| Raw result location | `$CXL_TRAINING_DATA_ROOT/results/<experiment_id>/` |
-| Summary location | `experimental_results/<experiment_id>/` |
+| Raw result location | `$CXL_TRAINING_DATA_ROOT/results/<experiment>/` |
+| Small results | this directory |
 | Related research question(s) | |
 
 ## 2. Motivation
