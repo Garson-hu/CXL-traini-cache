@@ -46,7 +46,8 @@ second part (evening of 2026-11-24) made the fixes the comparison needs
 decisions; the cache client on nodes with several RDMA devices), checked
 that 40 jobs start and run, and prepared the series (`run_main.sh` and its
 scripts in the experiment directory); the comparison also needs disk
-counters on the BeeGFS storage servers, which need a free CPU there. The
+counters on the BeeGFS storage servers, which need a Slurm job on each
+server (Slurm gives it the whole node, so the server must be free). The
 user approved the comparison on 2026-11-24 for an unattended start; it
 was queued that evening (`autostart.sh`, plan section 11.8). Check the
 experiment's `plan.md` and `$ROOT/series/` for whether it has run before

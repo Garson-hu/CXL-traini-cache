@@ -161,9 +161,11 @@ Read behaviour that experiments have to plan for (**[Observed]**, experiments
     to 10 minutes of what it read, a second read adds a few minutes, and
     everything older goes, including what earlier experiments had left.
   - A server that runs another user's job keeps less than the others.
-  - Read-only monitoring: a one-CPU Slurm job on a storage server can read
+  - Read-only monitoring: a Slurm job on a storage server can read
     `/proc/diskstats`, `/proc/meminfo`, and `/proc/vmstat`; the chunk
-    directories are not readable.
+    directories are not readable. Slurm gives such a job the whole node
+    even if it asks for one CPU (`hardware/c39.md`, section 5), so the
+    server must be free of other jobs and is kept from them meanwhile.
   - A file that a job on another node is still writing is not readable
     from c28 until the job closes it (the BeeGFS client buffers writes):
     logs of running jobs cannot be followed from the launch node. Files

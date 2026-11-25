@@ -241,8 +241,9 @@ with several RDMA devices; 40 jobs start and run through the comparison's
 scripts; the other users' reads are measured per user; scripts for the
 series, the storage monitors, the probe of the storage state, and the
 analysis exist and were rehearsed with four jobs. Open: disk counters need
-a free CPU on the storage servers (none on 2026-11-24; the earliest are
-expected on 2026-11-25). Expected and to be respected when the result is
+a Slurm job on each storage server, and Slurm allocates whole nodes, so
+the servers must be free of other users' jobs (none was until 22:02 on
+2026-11-24; the others are expected on 2026-11-25). Expected and to be respected when the result is
 read: in 20 minutes known order is still building up its reuse (simulated
 hit share 1 − exp(−n/N)), so the second window is not a steady state;
 getting past the first peak would take 35 to 45 minutes per run at the

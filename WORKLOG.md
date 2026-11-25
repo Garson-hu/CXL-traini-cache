@@ -161,6 +161,19 @@ actually done and actually verified. If something was not checked, say so.
   other users, and keys: none. No attribution line in any commit message.
   Runs started from now on record the repository's commit themselves
   (`launch_emu.sh`), so the main comparison will carry the new commit.
+- **Correction (22:10):** a monitor job does not take one CPU of a
+  storage server but the whole node: Slurm allocates whole nodes here
+  (`select/linear`). Seen when c11 became free at 22:02 and the queued
+  monitor started there with 16 CPUs allocated. It validated the new
+  monitor script on a real storage server (data disks found by their
+  mount points, counters once a second) and was then cancelled so that it
+  does not keep c11 from other users until the series starts. The
+  monitors of c11 and c17 are queued again with a dependency: they start
+  only once the monitor on c14 has started. Those of c12, c13, c15, c16
+  stay queued as they were. Wording corrected in `hardware/c39.md`,
+  `docs/storage.md`, `docs/experiment_plan.md`, `CLAUDE.md`, and the
+  experiment index; "a free CPU" in older entries of this log means a
+  free node.
 - **Next steps:** when the series has run: `tables-m.md` (built by the
   starter), verification of the logs, figures, and the assessment against
   the plan's Q1 to Q5 and the predictions of the earlier simulations. If
